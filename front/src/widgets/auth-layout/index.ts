@@ -1,0 +1,1 @@
+export {AuthSplitScreen} from './ui/auth-split-screen'
