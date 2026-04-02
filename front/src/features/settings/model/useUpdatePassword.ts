@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 
 interface UpdatePasswordPayload {
   newPassword: string;
+  oldPassword: string;
 }
 
 export const useUpdatePassword = () => {

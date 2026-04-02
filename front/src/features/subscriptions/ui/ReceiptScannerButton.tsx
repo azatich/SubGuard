@@ -1,11 +1,9 @@
 import { useState, useRef } from "react";
 import { Button } from "@/shared/ui/button";
 import { Loader2, ReceiptText } from "lucide-react";
-// Замени на импорт твоей функции уведомлений
 import { toast } from "sonner";
 import { api } from "@/shared/lib/api";
 
-// Типизируем то, что нам вернет ИИ
 export interface ParsedReceiptData {
   merchant?: string;
   totalCost?: number;

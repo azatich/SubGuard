@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 
@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select";
-import { Camera, Loader2 } from "lucide-react";
+import { Camera, Loader2, User } from "lucide-react";
 import Image from "next/image";
 import { useUpdateProfile } from "../model/useUpdateProfile";
 import { useProfile } from "@/entities/user/useProfile";
@@ -34,39 +34,28 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export const ProfileInfoCard = () => {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  
   const { mutate: updateProfile, isPending } = useUpdateProfile();
   const { data: user, isPending: isLoadingUserProfile } = useProfile();
   const { mutate: deleteAvatar, isPending: isLoadingDeleteAvatar } =
     useDeleteProfileAvatar();
-
-  const {
+    
+    const {
     control,
     register,
     handleSubmit,
     formState: { errors, isDirty, isSubmitting },
-    reset,
   } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
-    defaultValues: {
-      fullName: "",
-      baseCurrency: "",
-      reminderDays: "3",
+    values: {
+      fullName: user?.full_name || "",
+      baseCurrency: user?.base_currency || 'USD',
+      reminderDays: user?.reminder_days?.toString() || '3',
     },
   });
 
-  useEffect(() => {
-    if (user) {
-      reset({
-        fullName: user.full_name || "",
-        baseCurrency: user.base_currency || "USD",
-        reminderDays: user.reminder_days?.toString() || "3", 
-      });
-      setAvatarPreview(user.avatar_url);
-    }
-  }, [user, reset]);
+  const [avatarPreview, setAvatarPreview] = useState<string>(user?.avatar_url || '');
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -111,7 +100,7 @@ export const ProfileInfoCard = () => {
           {/* Аватар (без изменений) */}
           <div className="flex items-center gap-6">
             <div
-              className="relative w-24 h-24 rounded-full overflow-hidden border border-zinc-700 bg-zinc-800 flex items-center justify-center group cursor-pointer"
+              className={`${!avatarPreview ? 'animate-pulse' : '' } relative w-24 h-24 rounded-full overflow-hidden border border-zinc-700 bg-zinc-800 flex items-center justify-center group cursor-pointer`}
               onClick={() => fileInputRef.current?.click()}
             >
               {avatarPreview ? (
@@ -120,9 +109,10 @@ export const ProfileInfoCard = () => {
                   alt="Avatar"
                   fill
                   className="object-cover"
+                  sizes="96px"
                 />
               ) : (
-                <span className="text-3xl font-bold text-zinc-500">A</span>
+                <User className="w-8 h-8 text-zinc-600" />
               )}
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <Camera className="w-6 h-6 text-white" />

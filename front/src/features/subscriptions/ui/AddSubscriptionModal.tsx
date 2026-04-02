@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Select,
   SelectContent,
@@ -22,7 +22,6 @@ import {
 } from "@/entities/subscriptions";
 import { useAddSubscription } from "../model/use-add-subscription";
 import { MarketplaceGrid } from "./MarketplaceGrid";
-import { ParsedReceiptData, ReceiptScannerButton } from "./ReceiptScannerButton";
 
 const subscriptionSchema = z.object({
   name: z.string().min(2, "Введите название сервиса"),
@@ -69,13 +68,6 @@ export const AddSubscriptionModal = ({
 
   const { mutate: addSubscription, isPending } = useAddSubscription();
 
-  useEffect(() => {
-    if (!isOpen) {
-      reset();
-      setSelectedTemplate(null);
-    }
-  }, [isOpen, reset]);
-
   const handleTemplateSelect = (template: SubscriptionTemplate) => {
     setSelectedTemplate(template);
     if (template.name) {
@@ -88,11 +80,17 @@ export const AddSubscriptionModal = ({
       reset();
     }
   };
+  const handleClose = () => {
+    reset();
+    setSelectedTemplate(null);
+    onClose();
+  };
 
   const onSubmit = async (data: SubscriptionFormValues) => {
     await addSubscription(data);
-    onClose();
+    handleClose()
   };
+
 
   if (!isOpen) return null;
 
@@ -100,12 +98,12 @@ export const AddSubscriptionModal = ({
     <div
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) {
-          onClose();
+          handleClose()
         }
       }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
     >
-      <div className="w-full max-w-[480px] bg-[#18181b] border border-zinc-800 rounded-2xl shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-200 overflow-y-auto max-h-[90vh] scrollbar-hide">
+      <div className="w-full max-w-120 bg-[#18181b] border border-zinc-800 rounded-2xl shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-200 overflow-y-auto max-h-[90vh] scrollbar-hide">
         <div className="flex items-start justify-between p-6 pb-4 border-b border-zinc-800/50">
           <div>
             <h2 className="text-xl font-bold text-white">
@@ -118,7 +116,7 @@ export const AddSubscriptionModal = ({
             </p>
           </div>
           <Button
-            onClick={onClose}
+            onClick={handleClose}
             className="text-zinc-500 hover:text-white transition-colors p-1 rounded-md hover:bg-zinc-800"
           >
             <X className="w-5 h-5" />
@@ -171,7 +169,7 @@ export const AddSubscriptionModal = ({
                         value={field.value}
                       >
                         <SelectTrigger
-                          className={`w-full h-[50px] bg-[#0a0a0a] border ${
+                          className={`w-full h-12.5 bg-[#0a0a0a] border ${
                             errors.category
                               ? "border-red-500"
                               : "border-zinc-800"
@@ -190,7 +188,7 @@ export const AddSubscriptionModal = ({
                                 <SelectItem
                                   key={key}
                                   value={key}
-                                  className="focus:bg-zinc-800 focus:text-white data-[highlighted]:bg-zinc-800 data-[highlighted]:text-white cursor-pointer rounded-lg py-2.5 px-3 my-0.5 outline-none transition-colors"
+                                  className="focus:bg-zinc-800 focus:text-white cursor-pointer rounded-lg py-2.5 px-3 my-0.5 outline-none transition-colors"
                                 >
                                   {obj.label}
                                 </SelectItem>
@@ -222,7 +220,7 @@ export const AddSubscriptionModal = ({
                         value={field.value}
                       >
                         <SelectTrigger
-                          className={`w-full h-[50px] bg-[#0a0a0a] border ${
+                          className={`w-full h-12.5 bg-[#0a0a0a] border ${
                             errors.cycle ? "border-red-500" : "border-zinc-800"
                           } rounded-xl px-4 text-sm text-white focus:ring-0 focus:ring-offset-0 focus:border-zinc-600 transition-colors hover:bg-[#121212]`}
                         >
@@ -239,7 +237,7 @@ export const AddSubscriptionModal = ({
                                 <SelectItem
                                   key={key}
                                   value={key}
-                                  className="focus:bg-zinc-800 focus:text-white data-[highlighted]:bg-zinc-800 data-[highlighted]:text-white cursor-pointer rounded-lg py-2.5 px-3 my-0.5 outline-none transition-colors"
+                                  className="focus:bg-zinc-800 focus:text-white cursor-pointer rounded-lg py-2.5 px-3 my-0.5 outline-none transition-colors"
                                 >
                                   {label}
                                 </SelectItem>
@@ -277,10 +275,10 @@ export const AddSubscriptionModal = ({
                           onValueChange={field.onChange}
                           value={field.value}
                         >
-                          <SelectTrigger className="w-[100px] h-[50px] border-0 border-r border-zinc-800 rounded-none bg-transparent text-zinc-400 hover:text-white focus:ring-0 focus:ring-offset-0 px-3 shadow-none transition-colors outline-none">
+                          <SelectTrigger className="w-25 h-12.5 border-0 border-r border-zinc-800 rounded-none bg-transparent text-zinc-400 hover:text-white focus:ring-0 focus:ring-offset-0 px-3 shadow-none transition-colors outline-none">
                             <SelectValue placeholder="USD ($)" />
                           </SelectTrigger>
-                          <SelectContent className="bg-[#18181b] border-zinc-800 text-zinc-300 rounded-xl shadow-2xl min-w-[110px]">
+                          <SelectContent className="bg-[#18181b] border-zinc-800 text-zinc-300 rounded-xl shadow-2xl min-w-27.5">
                             <SelectGroup>
                               <SelectItem
                                 value="USD"
@@ -335,7 +333,7 @@ export const AddSubscriptionModal = ({
                     <input
                       type="date"
                       {...register("date")}
-                      className={`w-full appearance-none h-[50px] bg-[#0a0a0a] border ${
+                      className={`w-full appearance-none h-12.5 bg-[#0a0a0a] border ${
                         errors.date ? "border-red-500" : "border-zinc-800"
                       } rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:opacity-50`}
                     />
@@ -353,7 +351,7 @@ export const AddSubscriptionModal = ({
             <div className="p-6 pt-4 border-t border-zinc-800/50 flex items-center justify-end gap-3 bg-[#18181b]">
               <Button
                 type="button"
-                onClick={onClose}
+                onClick={handleClose}
                 className="px-4 py-2.5 text-sm font-medium text-zinc-400 hover:text-white transition-colors"
               >
                 Отмена

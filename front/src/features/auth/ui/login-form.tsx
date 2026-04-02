@@ -106,7 +106,7 @@ export const LoginForm = () => {
           </div>
           {errors.password && (
             <p className="text-red-500 text-sm mt-1">
-              {translateAuthError(errors.password.message)}
+              {errors.password.message}
             </p>
           )}
         </div>

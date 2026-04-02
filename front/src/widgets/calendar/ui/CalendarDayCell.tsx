@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion} from "framer-motion";
 import type { Subscription } from "@/entities/subscriptions";
 import { MiniIcon } from "./MiniIcon";
 
@@ -20,11 +20,12 @@ export const CalendarDayCell = ({
   onClick,
 }: CalendarDayCellProps) => {
   const hasBilling = subs.length > 0;
+  const shouldReduceMotion = useReducedMotion();
 
   return (
     <motion.button
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.97 }}
+      whileHover={{ scale: shouldReduceMotion ? 1 : 1.05 }}
+      whileTap={{ scale: shouldReduceMotion ? 1 : 0.97 }}
       onClick={onClick}
       className={`
         relative aspect-square rounded-xl flex flex-col items-center justify-start pt-2 pb-1 px-1 transition-all border

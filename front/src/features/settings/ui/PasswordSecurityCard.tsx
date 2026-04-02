@@ -32,8 +32,9 @@ export const PasswordSecurityCard = () => {
   const { mutate: updatePassword, isPending } = useUpdatePassword();
 
   const onSubmit = (data: PasswordFormValues) => {
+    if (data.newPassword === data.currentPassword) return;
     updatePassword(
-      { newPassword: data.newPassword },
+      { newPassword: data.newPassword, oldPassword: data.currentPassword},
       {
         onSuccess: () => reset(), // Очищаем форму только при успехе
       }

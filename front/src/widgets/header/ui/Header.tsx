@@ -3,14 +3,15 @@
 import type { JSX } from "react";
 import { useState } from "react";
 import Link from "next/link";
-import { LogOut, Menu, User, X } from "lucide-react";
-import { motion } from "framer-motion";
+import { Bell, LogOut, Menu, ShieldCheck, User, X } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/shared/ui/button";
-import { Avatar, AvatarFallback } from "@/shared/ui/avatar";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useProfile } from "@/entities/user/useProfile";
 import Image from "next/image";
 import { useLogout } from "@/features/auth";
+import { useNotifications } from "@/features/notifications";
+import { Notification } from "@/entities/notifications";
 
 const navLinks = [
   { name: "Дэшборд", href: "/dashboard" },
@@ -21,19 +22,27 @@ const navLinks = [
 export const Header = (): JSX.Element => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter()
+  const shouldReduceMotion = useReducedMotion();
 
   const { data: user, isPending } = useProfile();
   const { mutate: logout, isPending: isLogoutPending } = useLogout();
 
+  const { data: notifications } = useNotifications();
+  const safeNotifications: Notification[] = notifications || [];
+  const unreadCount = safeNotifications.filter((n) => !n.is_read).length;
+
   return (
     <header className="bg-zinc-950 text-white flex items-center justify-between border-b border-zinc-800 sticky top-0 z-50 w-full h-16">
       <div className="flex items-center justify-between px-4 sm:px-12 lg:px-16 relative w-full h-full">
-        <div className="flex items-center gap-2 font-semibold text-lg flex-shrink-0">
-          <div className="bg-[#2cfc73] p-1.5 rounded-lg flex items-center justify-center">
-            <span className="text-zinc-950 text-sm font-bold">SG</span>
+        <button onClick={() => router.push('/')} className="flex items-center gap-2 font-semibold text-lg shrink-0 hover:cursor-pointer">
+          <div className="bg-[#0A1F11] border border-green-500/50 p-1.5 rounded-lg flex items-center justify-center">
+            <span className="text-green-500 text-sm font-bold">
+              <ShieldCheck />
+            </span>
           </div>
           <span className="text-white">SubGuard</span>
-        </div>
+        </button>
 
         <nav className="hidden md:flex flex-1 justify-center gap-6 text-sm h-full">
           {navLinks.map((link) => {
@@ -46,7 +55,7 @@ export const Header = (): JSX.Element => {
                 aria-current={isActive ? "page" : undefined}
                 className={`
                   relative flex items-center h-full font-medium transition-colors
-                  ${isActive ? "text-white" : "text-zinc-400 hover:text-white"}
+                  ${isActive ? "text-green-500" : "text-zinc-400 hover:text-white"}
                 `}
               >
                 {link.name}
@@ -56,7 +65,7 @@ export const Header = (): JSX.Element => {
                     className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-500"
                     transition={{
                       type: "tween",
-                      duration: 0.3,
+                      duration: shouldReduceMotion ? 0 : 0.3,
                       ease: "easeInOut",
                     }}
                   />
@@ -80,6 +89,20 @@ export const Header = (): JSX.Element => {
             )}
           </Button>
 
+          <Link
+            className="relative hover:text-green-500"
+            href="/notifications"
+            aria-label="Уведомления"
+            title="Уведомления"
+          >
+            {unreadCount > 0 && (
+              <span className="absolute top-[-15px] right-[-10px] bg-[#2cfc73] text-black text-xs px-2 py-1 rounded-full">
+                {unreadCount}
+              </span>
+            )}
+            <Bell />
+          </Link>
+
           <div className="flex items-center gap-3">
             {isPending ? (
               <div className="w-10 h-10 rounded-full bg-zinc-800 animate-pulse" />
@@ -87,6 +110,7 @@ export const Header = (): JSX.Element => {
               <Link
                 href="/settings"
                 className="flex items-center gap-3 group hover:opacity-80 transition-opacity"
+                title="Профиль"
               >
                 <span className="hidden sm:block text-sm font-medium text-zinc-200 group-hover:text-white transition-colors">
                   {user?.full_name || "Пользователь"}
@@ -110,8 +134,14 @@ export const Header = (): JSX.Element => {
             )}
           </div>
 
-          <button disabled={isLogoutPending} onClick={() => logout()}>
-            <LogOut />
+          <button
+            aria-label="Выйти"
+            title="Выйти"
+            className="bg-red-500 p-2 rounded-lg flex justify-center items-center hover:bg-red-900 transition-colors duration-200"
+            disabled={isLogoutPending}
+            onClick={() => logout()}
+          >
+            <LogOut className="w-5 h-5" />
           </button>
         </div>
       </div>

@@ -19,7 +19,7 @@ export const MiniIcon = ({ sub }: MiniIconProps) => {
         style={{ backgroundColor: match.name === "GitHub Copilot" ? "#ffffff" : match.color }}
         title={sub.name}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+        {/* eslint_disable-next-line @next/next/no-img-element */}
         <img src={match.logoUrl} alt={sub.name} className="w-3 h-3 sm:w-4 sm:h-4 md:w-6 md:h-6 object-contain" />
       </div>
     );

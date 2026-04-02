@@ -5,7 +5,7 @@ export function middleware(req: NextRequest) {
 
     const isAuthPage = req.nextUrl.pathname.startsWith('/login') || req.nextUrl.pathname.startsWith('/signup');
 
-    const protectedRoutes = ['/dashboard', '/subscriptions', '/settings']
+    const protectedRoutes = ['/dashboard', '/subscriptions', '/settings', '/calendar', '/notifications']
     const isProtectedRoute = protectedRoutes.some(route => req.nextUrl.pathname.startsWith(route))
 
     if (!token && isProtectedRoute) {
@@ -25,6 +25,8 @@ export const config = {
         '/dashboard/:path*',
         '/subscriptions/:path*',
         '/settings/:path*',
+        '/notifications/:path*',
+        '/calendar/:path*',
         '/login',
         '/signup'
     ]
