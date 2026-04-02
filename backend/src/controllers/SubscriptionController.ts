@@ -91,7 +91,11 @@ export class SubscriptionController {
       if (cycle) updateFields.cycle = cycle;
       if (currency) updateFields.currency = currency;
       if (cost !== undefined) updateFields.cost = cost;
-      if (date) updateFields.first_payment_date = date;
+      if (date) {
+        updateFields.first_payment_date = date;
+        const nextPaymentDate = calculateNextPaymentDate(date, cycle);
+        updateFields.next_payment_date = nextPaymentDate; 
+      }
 
       if (Object.keys(updateFields).length === 0) {
         return res.status(400).json({ message: "No data to update" });
@@ -192,14 +196,14 @@ const calculateNextPaymentDate = (startDate: string, cycle: string): string => {
 
   // Пока дата в прошлом, прибавляем цикл, пока не выйдем в будущее или на сегодня
   while (nextDate < today) {
-    if (cycle === 'Monthly') {
+    if (cycle === "Monthly") {
       nextDate.setMonth(nextDate.getMonth() + 1);
-    } else if (cycle === 'Yearly') {
+    } else if (cycle === "Yearly") {
       nextDate.setFullYear(nextDate.getFullYear() + 1);
     } else {
-      break; 
+      break;
     }
   }
-  
-  return nextDate.toISOString().substring(0, 10); 
+
+  return nextDate.toISOString().substring(0, 10);
 };
