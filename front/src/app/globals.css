@@ -4,12 +4,10 @@
 
 
 @layer utilities {
-  /* Прячем скроллбар для Chrome, Safari и Opera */
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
 
-  /* Прячем скроллбар для IE, Edge и Firefox */
   .scrollbar-hide {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */

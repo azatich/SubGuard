@@ -1,9 +1,9 @@
-import { cn } from "@/shared/lib/utils";
 import "./globals.css";
+import { cn } from "@/shared/lib/utils";
 import { Inter } from "next/font/google";
 import { Providers } from "./providers";
 
-export const metadata = {
+export const metadata = { 
   title: "SubGuard | Home",
   description: "",
 };
