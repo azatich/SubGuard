@@ -48,7 +48,7 @@ app.use('/api/settings', settingsRouter)
 app.use('/api/receipt', receiptRouter)
 app.use('/api/notification', notificationRouter)
 
-cron.schedule('* * * * *', () => {
+cron.schedule('0 9 * * *', () => {
   NotificationController.processDailyReminders()
 })
 

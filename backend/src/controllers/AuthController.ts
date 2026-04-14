@@ -141,4 +141,57 @@ export class AuthController {
       return res.status(500).json({ message: `Internal server error: ${error}` });
     }
   }
+
+  static async getGoogleAuthUrl(req: Request, res: Response) {
+    try {
+      const redirectUrl = req.query.redirectUrl as string || 'http://localhost:3000/auth/callback';
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl,
+          skipBrowserRedirect: true
+        }
+      });
+
+      if (error) {
+        return res.status(500).json({ message: error.message });
+      }
+
+      return res.status(200).json({ url: data.url });
+    } catch (error) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  static async setSession(req: Request, res: Response) {
+    try {
+      const { access_token, refresh_token } = req.body;
+
+      if (!access_token || !refresh_token) {
+        return res.status(400).json({ message: "Tokens are required" });
+      }
+
+      // Check if session is valid by retrieving the user
+      const { data: { user }, error } = await supabase.auth.getUser(access_token);
+      
+      if (error || !user) {
+        return res.status(401).json({ message: "Invalid session" });
+      }
+
+      res.cookie("access_token", access_token, {
+        httpOnly: true,
+        maxAge: 60 * 60 * 1000, // 1 hour
+      });
+
+      res.cookie("refresh_token", refresh_token, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+
+      return res.status(200).json({ user: user });
+    } catch (error) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
 }
+
