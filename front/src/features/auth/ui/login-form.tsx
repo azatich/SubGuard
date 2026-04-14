@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { useLogin } from "../model/use-login";
+import { useSignupWithGoogle } from "../model/use-signup-google";
 import { translateAuthError } from "@/shared/lib/error-mapper";
 
 const loginSchema = z.object({
@@ -28,6 +29,7 @@ export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const { mutate: login, isPending, error, isError } = useLogin();
+  const { mutate: loginWithGoogle, isPending: isGooglePending } = useSignupWithGoogle();
 
   const onSubmit = (data: Inputs) => {
     login(data);
@@ -44,10 +46,18 @@ export const LoginForm = () => {
 
       <div className="grid gap-4">
         <Button
+          type="button"
+          onClick={() => loginWithGoogle()}
+          disabled={isGooglePending}
           variant="outline"
-          className="h-12 bg-transparent border-neutral-800 text-white hover:bg-neutral-900 hover:text-white rounded-full"
+          className="h-12 bg-transparent border-neutral-800 text-white hover:bg-neutral-900 hover:text-white rounded-full disabled:opacity-50"
         >
-          <span className="mr-2 text-lg">G</span> Google
+          {isGooglePending ? (
+            <span className="mr-2 text-lg animate-pulse">...</span>
+          ) : (
+            <span className="mr-2 text-lg">G</span>
+          )}
+          Google
         </Button>
       </div>
 
