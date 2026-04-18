@@ -38,6 +38,8 @@ export const ProfileInfoCard = () => {
   
   const { mutate: updateProfile, isPending } = useUpdateProfile();
   const { data: user, isPending: isLoadingUserProfile } = useProfile();
+  console.log(user);
+  
   const { mutate: deleteAvatar, isPending: isLoadingDeleteAvatar } =
     useDeleteProfileAvatar();
     

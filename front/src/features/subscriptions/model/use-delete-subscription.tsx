@@ -14,6 +14,7 @@ export const useDeleteSubscription = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subscriptions"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
       successToast('Успешно удалено')
     },
 
