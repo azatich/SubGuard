@@ -1,10 +1,9 @@
 import { type Request, type Response } from "express";
-import { Resend } from "resend";
 import { supabase } from "../index.js";
 import { isSameDay, subDays } from "date-fns";
 import type { AuthenticatedRequest } from "../middlewares/AuthMiddleware.js";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { sendMail } from "../services/email.service.js";
+import { getReminderEmailHtml } from "../services/email-templates/reminder.js";
 
 export class NotificationController {
   static async processDailyReminders(req?: Request, res?: Response) {
@@ -75,24 +74,23 @@ export class NotificationController {
           continue;
         }
 
-        const { error: emailError } = await resend.emails.send({
-          from: "SubGuard <onboarding@resend.dev>", // Заменишь на свой
-          to: [userEmail],
-          subject: `🔔 Напоминание: скоро списание за ${sub.name}`,
-          html: `
-            <div style="font-family: sans-serif; color: #18181b;">
-              <h2>Привет!</h2>
-              <p>Напоминаем, что <strong>через ${reminderDays} дней</strong> произойдет списание за подписку <strong>${sub.name}</strong>.</p>
-              <p>Сумма к оплате: <strong>${sub.cost} ${sub.currency}</strong></p>
-              <hr />
-              <p style="font-size: 12px; color: #71717a;">
-                Управляй своими расходами в <a href="https://subguard.vercel.app">SubGuard</a>.
-              </p>
-            </div>
-          `,
-        });
-
-        if (emailError) {
+        try {
+          await sendMail({
+            to: userEmail,
+            subject: `🔔 Напоминание: через ${reminderDays} дн. спишут за ${sub.name}`,
+            html: getReminderEmailHtml({
+              subName: sub.name,
+              cost: sub.cost,
+              currency: sub.currency,
+              reminderDays,
+              nextPaymentDate: new Date(sub.next_payment_date).toLocaleDateString("ru-RU", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              }),
+            }),
+          });
+        } catch (emailError) {
           console.error(`Ошибка отправки письма для ${userEmail}:`, emailError);
           continue;
         }
@@ -183,3 +181,5 @@ export class NotificationController {
     }
   }
 }
+
+

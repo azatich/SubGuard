@@ -1,6 +1,7 @@
 import { type Request, type Response } from "express";
 import { supabase } from "../index.js";
 import { createClient } from "@supabase/supabase-js";
+import { sendMail } from "../services/email.service.js";
 
 export class AuthController {
   static async signup(req: Request, res: Response) {
@@ -21,6 +22,32 @@ export class AuthController {
         return res.status(500).json({
           message: error.message,
         });
+      }
+
+      // 📧 Отправляем приветственное письмо после успешной регистрации
+      try {
+        await sendMail({
+          to: email,
+          subject: "🎉 Добро пожаловать в SubGuard!",
+          html: `
+            <div style="font-family: sans-serif; color: #18181b; max-width: 480px; margin: 0 auto;">
+              <h2>Привет, ${full_name}!</h2>
+              <p>Спасибо за регистрацию в <strong>SubGuard</strong>.</p>
+              <p>Теперь ты можешь отслеживать все свои подписки, получать напоминания о списаниях и экономить деньги.</p>
+              <a href="https://subsguard.vercel.app"
+                 style="display: inline-block; margin-top: 16px; padding: 12px 24px;
+                        background: #6366f1; color: #fff; border-radius: 8px;
+                        text-decoration: none; font-weight: 600;">
+                Перейти в SubGuard
+              </a>
+              <hr style="margin-top: 24px;" />
+              <p style="font-size: 12px; color: #71717a;">Если ты не регистрировался — просто проигнорируй это письмо.</p>
+            </div>
+          `,
+        });
+      } catch (emailError) {
+        // Не блокируем регистрацию, если письмо не отправилось
+        console.error("Ошибка отправки приветственного письма:", emailError);
       }
 
       return res.status(200).json(data);

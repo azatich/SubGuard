@@ -90,8 +90,12 @@ export class SettingsController {
         avatar_url: profile.avatar_url,
         email: profile.email,
         updated_at: profile.updated_at,
+        reminder_days: profile.reminder_days,
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error("Settings Get Error:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
 
   static async deleteAvatar(req: AuthenticatedRequest, res: Response) {
