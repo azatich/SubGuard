@@ -116,6 +116,35 @@ export default function SubGuardHomePage() {
       {/* ── MAIN STAGE ── */}
       <main className="relative flex-1 flex items-center justify-center min-h-screen">
 
+        {/* ── Green glow ── */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-green-500/15 blur-[120px] rounded-full pointer-events-none z-0" />
+
+        {/* ── Grid background ── */}
+        <div className="absolute inset-0 pointer-events-none z-0 [mask-image:radial-gradient(ellipse_at_center,white,transparent_75%)]">
+          <svg
+            className="absolute h-full w-full"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <pattern
+                id="hero-grid"
+                width="40"
+                height="40"
+                patternUnits="userSpaceOnUse"
+              >
+                <path
+                  d="M 40 0 L 0 0 0 40"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  className="text-green-500/10"
+                />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#hero-grid)" />
+          </svg>
+        </div>
+
         {/* ── HERO — centered, highest z-index ── */}
         <div className="relative z-30 flex flex-col items-center text-center px-5 max-w-[280px] sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
           <div className="flex items-center gap-2 mb-6 sm:mb-10 px-4 py-1.5 rounded-full border border-green-500/20 bg-green-500/10 text-green-500 text-xs font-semibold tracking-wide">
@@ -141,10 +170,9 @@ export default function SubGuardHomePage() {
         <div className="
           absolute z-20 pointer-events-none
           w-40 sm:w-60 md:w-72 lg:w-80 xl:w-96
-          -left-24 sm:-left-6 md:left-2 lg:left-10 xl:left-20
+          -left-12 sm:-left-6 md:left-2 lg:left-10 xl:left-20
           top-1/2 -translate-y-[65%]
-          rotate-[-2deg]
-          hover:scale-105 transition-transform duration-300
+          animate-float-1
         ">
           <MonthlySpendCard />
         </div>
@@ -155,8 +183,7 @@ export default function SubGuardHomePage() {
           w-40 sm:w-60 md:w-72 lg:w-80 xl:w-96
           -right-24 sm:-right-6 md:right-2 lg:right-10 xl:right-20
           top-1/2 translate-y-[8%]
-          rotate-[2deg]
-          hover:scale-105 transition-transform duration-300
+          animate-float-2
         ">
           <ActiveSubsCard />
         </div>
@@ -169,7 +196,7 @@ export default function SubGuardHomePage() {
           bottom-10 sm:bottom-14 md:bottom-20
           blur-[3px]
           opacity-75
-          rotate-[-4deg]
+          animate-float-3
         ">
           <LeakageCard />
         </div>
@@ -182,7 +209,7 @@ export default function SubGuardHomePage() {
           top-16 sm:top-20 md:top-28
           blur-[3px]
           opacity-65
-          rotate-[5deg]
+          animate-float-4
         ">
           <UnwantedCard />
         </div>
