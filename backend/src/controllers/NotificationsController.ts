@@ -74,6 +74,25 @@ export class NotificationController {
           continue;
         }
 
+        // 6. СНАЧАЛА вставляем запись в БД (защита от дублей при race condition)
+        const { data: insertedNotification, error: insertError } = await supabase
+          .from("notifications")
+          .insert({
+            user_id: sub.user_id,
+            subscription_id: sub.id,
+            sent_at: sub.next_payment_date,
+            message: `Напоминание за ${reminderDays} дн. до оплаты ${sub.name}`,
+            is_read: false,
+          })
+          .select("id")
+          .single();
+
+        if (insertError) {
+          console.error(`Ошибка записи уведомления для ${userEmail}:`, insertError);
+          continue;
+        }
+
+        // 7. Отправляем email
         try {
           await sendMail({
             to: userEmail,
@@ -91,17 +110,13 @@ export class NotificationController {
             }),
           });
         } catch (emailError) {
+          // Если письмо не отправилось — удаляем запись, чтобы крон попробовал снова
+          if (insertedNotification?.id) {
+            await supabase.from("notifications").delete().eq("id", insertedNotification.id);
+          }
           console.error(`Ошибка отправки письма для ${userEmail}:`, emailError);
           continue;
         }
-
-        await supabase.from("notifications").insert({
-          user_id: sub.user_id,
-          subscription_id: sub.id,
-          sent_at: sub.next_payment_date,
-          message: `Напоминание за ${reminderDays} дн. до оплаты ${sub.name}`,
-          is_read: false,
-        });
 
         sentCount++;
       }
