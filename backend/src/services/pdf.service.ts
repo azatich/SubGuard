@@ -6,7 +6,7 @@ export const extractTextFromPdf = (fileBuffer: Buffer): Promise<string> => {
       console.log("--- СТАРТ ПАРСИНГА ЧЕРЕЗ PDF2JSON ---");
       
       // Инициализируем парсер. Единица (1) означает, что нам нужен только чистый текст
-      const pdfParser = new PDFParser(null, 1);
+      const pdfParser = new PDFParser(null, true);
 
       // Событие: Ошибка при чтении
       pdfParser.on("pdfParser_dataError", (errData: any) => {
