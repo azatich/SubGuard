@@ -9,8 +9,9 @@ export const extractTextFromPdf = (fileBuffer: Buffer): Promise<string> => {
       const pdfParser = new PDFParser(null, 1);
 
       // Событие: Ошибка при чтении
-      pdfParser.on("pdfParser_dataError", (errData) => {
-        console.error("🔥 Ошибка pdf2json:", errData.parserError);
+      pdfParser.on("pdfParser_dataError", (errData: any) => {
+        const errorMessage = errData?.parserError || errData;
+        console.error("🔥 Ошибка pdf2json:", errorMessage);
         reject(new Error("Не удалось прочитать PDF файл"));
       });
 

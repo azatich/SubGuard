@@ -1,22 +1,5 @@
 import nodemailer from "nodemailer";
 
-// ----------------------------------------------------------------
-// 📧 Email Service — Nodemailer + Gmail (App Password)
-// ----------------------------------------------------------------
-//
-// В файл .env нужно добавить:
-//
-//   EMAIL_USER=your-email@gmail.com
-//   EMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx
-//
-// ⚠️  EMAIL_APP_PASSWORD — это НЕ обычный пароль от Gmail!
-//     Это «Пароль приложения» (App Password), который генерируется
-//     в настройках Google-аккаунта:
-//     https://myaccount.google.com/apppasswords
-//
-//     Для этого у вас должна быть включена двухфакторная аутентификация.
-// ----------------------------------------------------------------
-
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
