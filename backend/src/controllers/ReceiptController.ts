@@ -1,6 +1,8 @@
-import { type Response } from "express";
+import { type Request, type Response } from "express";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { AuthenticatedRequest } from "../middlewares/AuthMiddleware.js";
+import { extractTextFromPdf } from "../services/pdf.service.js";
+import { detectRecurringSubscriptionsFromText } from "../services/llm.service.js";
 
 const PROMPT = `
 Ты — эксперт по распознаванию финансовых чеков, квитанций и скриншотов об оплате.
@@ -30,7 +32,9 @@ export class ReceiptController {
         });
       }
 
-      const mimeTypeMatch = imageBase64.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/);
+      const mimeTypeMatch = imageBase64.match(
+        /data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/,
+      );
       const mimeType = mimeTypeMatch ? mimeTypeMatch[1] : "image/jpeg";
       const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, "");
 
@@ -109,12 +113,59 @@ export class ReceiptController {
           error: "Ошибка парсинга ответа от ИИ",
         });
       }
-
     } catch (error: any) {
       console.error("Ошибка в ReceiptController.ScanReceipt:", error.message);
       return res.status(500).json({
         success: false,
         error: `Похоже что серверы заняты. Попробуй позже. ${error.message}`,
+      });
+    }
+  }
+
+  static async ScanSubscriptions(
+    req: AuthenticatedRequest | Request,
+    res: Response,
+  ) {
+    try {
+      const file = (req as Request).file;
+
+      if (!file) {
+        return res.status(400).json({
+          success: false,
+          error: "PDF-файл не загружен. Используйте поле 'file'.",
+        });
+      }
+
+      if (file.mimetype !== "application/pdf") {
+        return res.status(400).json({
+          success: false,
+          error: "Разрешён только PDF-файл.",
+        });
+      }
+
+      // Читаем первые 5 символов файла (так называемые "магические числа")
+      const fileHeader = file.buffer.toString("utf8", 0, 5);
+      console.log("Заголовок файла:", fileHeader);
+
+      if (fileHeader !== "%PDF-") {
+        return res.status(400).json({
+          success: false,
+          error: `Это не настоящий PDF! Файл начинается с: ${fileHeader}`,
+        });
+      }
+
+      const rawText = await extractTextFromPdf(file.buffer);
+      const subscriptions = await detectRecurringSubscriptionsFromText(rawText);
+
+      return res.status(200).json(subscriptions);
+    } catch (error: any) {
+      console.error(
+        "Ошибка в ReceiptController.ScanSubscriptions:",
+        error.message,
+      );
+      return res.status(500).json({
+        success: false,
+        error: error.message || "Ошибка сервера при анализе PDF",
       });
     }
   }

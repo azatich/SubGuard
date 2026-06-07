@@ -14,6 +14,7 @@
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
     "types": [],
     // For nodejs:
     // "lib": ["esnext"],
