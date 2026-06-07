@@ -184,7 +184,7 @@ export const ProfileInfoCard = () => {
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger
-                        className={`w-full h-[46px] bg-[#0a0a0a] border ${errors.baseCurrency ? "border-red-500" : "border-zinc-800"} rounded-xl px-4 text-sm text-white focus:ring-0 focus:ring-offset-0 focus:border-zinc-600 transition-colors hover:bg-[#121212]`}
+                        className={`w-full h-11.5 bg-[#0a0a0a] border ${errors.baseCurrency ? "border-red-500" : "border-zinc-800"} rounded-xl px-4 text-sm text-white focus:ring-0 focus:ring-offset-0 focus:border-zinc-600 transition-colors hover:bg-[#121212]`}
                       >
                         <SelectValue placeholder="Select currency" />
                       </SelectTrigger>
@@ -223,7 +223,7 @@ export const ProfileInfoCard = () => {
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger
-                        className={`w-full h-[46px] bg-[#0a0a0a] border ${errors.reminderDays ? "border-red-500" : "border-zinc-800"} rounded-xl px-4 text-sm text-white focus:ring-0 focus:ring-offset-0 focus:border-zinc-600 transition-colors hover:bg-[#121212]`}
+                        className={`w-full h-11.5 bg-[#0a0a0a] border ${errors.reminderDays ? "border-red-500" : "border-zinc-800"} rounded-xl px-4 text-sm text-white focus:ring-0 focus:ring-offset-0 focus:border-zinc-600 transition-colors hover:bg-[#121212]`}
                       >
                         <SelectValue placeholder="Выберите время">
                           {field.value ? formatDaysLabel(field.value) : null}

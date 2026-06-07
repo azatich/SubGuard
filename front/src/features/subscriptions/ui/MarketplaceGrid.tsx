@@ -16,6 +16,10 @@ interface MarketplaceGridProps {
   setSelectedTemplate: (template: SubscriptionTemplate | null) => void;
 }
 
+const normalizeCategoryValue = (category?: string) => {
+  return category && SUBSCRIPTION_CATEGORIES[category] ? category : "Software";
+};
+
 export const MarketplaceGrid = ({ 
   onSelectTemplate,
   setValue,
@@ -38,10 +42,12 @@ export const MarketplaceGrid = ({
   }, [searchQuery, selectedCategory]);
 
   const handleScanSuccess = (data: ParsedReceiptData) => {
+    const category = normalizeCategoryValue(data.categoryFallback);
+
     // 1. Устанавливаем фиктивный шаблон, чтобы переключить модалку на Шаг 2 (Форму)
     setSelectedTemplate({
       name: data.merchant || "",
-      category: data.categoryFallback || "Software",
+      category,
       color: "#18181b",
       logoUrl: "",
     });
@@ -49,7 +55,7 @@ export const MarketplaceGrid = ({
     if (data.merchant) setValue("name", data.merchant);
     if (data.totalCost) setValue("cost", data.totalCost);
     if (data.currencyISO) setValue("currency", data.currencyISO);
-    if (data.categoryFallback) setValue("category", data.categoryFallback);
+    setValue("category", category);
     if (data.paymentDate) setValue("date", data.paymentDate);
   };
 

@@ -6,13 +6,14 @@ import { Loader2, Upload, Trash2, Check, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '@/shared/lib/api';
 import { useAddSubscription } from '../model/use-add-subscription';
+import { SUBSCRIPTION_CATEGORIES } from '@/entities/subscriptions';
 
 export interface SubscriptionPrediction {
   name: string;
   cost: number;
   currency: string;
   date: string;
-  category: 'Entertainment' | 'Work' | 'Education' | 'Utilities' | 'Other';
+  category: keyof typeof SUBSCRIPTION_CATEGORIES;
 }
 
 interface PdfSubscriptionScannerProps {
@@ -108,14 +109,7 @@ export const PdfSubscriptionScanner = ({
   };
 
   const getCategoryLabel = (category: string): string => {
-    const labels: Record<string, string> = {
-      Entertainment: 'Развлечения',
-      Work: 'Работа',
-      Education: 'Образование',
-      Utilities: 'Услуги',
-      Other: 'Прочее',
-    };
-    return labels[category] || category;
+    return SUBSCRIPTION_CATEGORIES[category]?.label || category;
   };
 
   const getScanErrorMessage = (error: unknown): string => {

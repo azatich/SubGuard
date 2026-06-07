@@ -21,6 +21,10 @@ import {
 } from "@/entities/subscriptions";
 import { useEditSubscription } from "../model/use-edit-subscription";
 
+const normalizeCategoryValue = (category: string) => {
+  return SUBSCRIPTION_CATEGORIES[category] ? category : "Software";
+};
+
 const subscriptionSchema = z.object({
   name: z.string().min(2, "Введите название сервиса"),
   category: z.string().min(1, "Выберите категорию"),
@@ -55,7 +59,7 @@ export const EditSubscriptionModal = ({
     resolver: zodResolver(subscriptionSchema),
     values: {
       name: subscription.name,
-      category: subscription.category,
+      category: normalizeCategoryValue(subscription.category),
       cycle: subscription.cycle,
       currency: subscription.currency,
       date: subscription.first_payment_date,
@@ -148,7 +152,7 @@ export const EditSubscriptionModal = ({
                       >
                         <SelectValue placeholder="Выберите категорию">
                           {field.value
-                            ? SUBSCRIPTION_CATEGORIES[field.value].label
+                            ? SUBSCRIPTION_CATEGORIES[field.value]?.label
                             : null}
                         </SelectValue>
                       </SelectTrigger>
