@@ -1,6 +1,8 @@
 export {AddSubscriptionModal} from './ui/AddSubscriptionModal'
 export {EditSubscriptionModal} from './ui/EditSubscriptionModel'
 export {MarketplaceGrid} from './ui/MarketplaceGrid'
+export {ReceiptScannerButton} from './ui/ReceiptScannerButton'
+export {PdfSubscriptionScanner, type SubscriptionPrediction} from './ui/PdfSubscriptionScanner'
 
 export {useAddSubscription} from './model/use-add-subscription'
 export {useSubscriptionsQuery} from './model/use-subscriptions-query'

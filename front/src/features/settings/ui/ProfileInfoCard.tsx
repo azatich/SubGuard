@@ -27,7 +27,8 @@ const formatDaysLabel = (days: string) => {
 const profileSchema = z.object({
   fullName: z.string().min(2, "Полное имя должно содержать минимум 2 символа"),
   baseCurrency: z.string().min(1, "Пожалуйста, выберите валюту"),
-  reminderDays: z.string().min(1, "Выберите срок напоминания"), 
+  reminderDays: z.string().min(1, "Выберите срок напоминания"),
+  telegramChatId: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -54,6 +55,7 @@ export const ProfileInfoCard = () => {
       fullName: user?.full_name || "",
       baseCurrency: user?.base_currency || 'USD',
       reminderDays: user?.reminder_days?.toString() || '3',
+      telegramChatId: user?.telegram_chat_id || "",
     },
   });
 
@@ -74,12 +76,15 @@ export const ProfileInfoCard = () => {
 
       formData.append("fullName", data.fullName);
       formData.append("baseCurrency", data.baseCurrency);
-      formData.append("reminderDays", data.reminderDays); 
-      
+      formData.append("reminderDays", data.reminderDays);
+      if (data.telegramChatId) {
+        formData.append("telegramChatId", data.telegramChatId);
+      }
+
       if (avatarFile) {
         formData.append("avatar", avatarFile);
       }
-      
+
       await updateProfile(formData);
       setAvatarFile(null);
     } catch (error) {
@@ -253,6 +258,30 @@ export const ProfileInfoCard = () => {
                 </span>
               </div>
 
+            </div>
+
+            {/* Telegram Chat ID */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-zinc-200">
+                Telegram Chat ID
+              </label>
+              <input
+                {...register("telegramChatId")}
+                placeholder="Введите ваш Telegram Chat ID"
+                type="text"
+                className={`w-full bg-[#0a0a0a] border ${errors.telegramChatId ? "border-red-500" : "border-zinc-800"} rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors`}
+              />
+              <span className="text-xs text-zinc-500">
+                Сообщения об уведомлениях будут отправляться вам в Telegram.{" "}
+                <a
+                  href="https://t.me/userinfobot"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 underline"
+                >
+                  Узнайте ID здесь
+                </a>
+              </span>
             </div>
           </div>
         </div>
