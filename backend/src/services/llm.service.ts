@@ -1,6 +1,20 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-export type SubscriptionCategory = "Entertainment" | "Work" | "Education" | "Utilities" | "Other";
+const SUBSCRIPTION_CATEGORIES = [
+  "Entertainment",
+  "Music",
+  "Software",
+  "Shopping",
+  "Health",
+  "AI",
+  "Cloud",
+  "Gaming",
+  "VPN",
+  "Fitness",
+  "Education",
+] as const;
+
+export type SubscriptionCategory = (typeof SUBSCRIPTION_CATEGORIES)[number];
 
 export interface SubscriptionPrediction {
   name: string;
@@ -17,7 +31,7 @@ const SYSTEM_PROMPT = `Ты — эксперт по финансовым вып�
 - cost: сумма списания (число)
 - currency: код валюты в 3 буквы (KZT, USD, EUR, RUB и т.д.)
 - date: дата последнего списания в формате YYYY-MM-DD
-- category: одна из категорий Entertainment, Work, Education, Utilities, Other
+- category: строго один из этих ключей: Entertainment, Music, Software, Shopping, Health, AI, Cloud, Gaming, VPN, Fitness, Education
 
 Если не удаётся определить значение, выбери наиболее вероятную интерпретацию, но не возвращай null. Если в тексте нет подписок, верни пустой массив [] без дополнительных сообщений.
 
@@ -29,7 +43,8 @@ const SYSTEM_PROMPT = `Ты — эксперт по финансовым вып�
 Примеры желаемого формата:
 [
   {"name":"Netflix","cost":14.99,"currency":"USD","date":"2026-05-10","category":"Entertainment"},
-  {"name":"Yandex Plus","cost":5.99,"currency":"KZT","date":"2026-05-01","category":"Entertainment"}
+  {"name":"Yandex Plus","cost":5.99,"currency":"KZT","date":"2026-05-01","category":"Entertainment"},
+  {"name":"GitHub Copilot","cost":10,"currency":"USD","date":"2026-05-03","category":"AI"}
 ]
 `;
 
@@ -43,7 +58,23 @@ function normalizeLlmOutput(text: string): string {
   return text.replace(/```(?:json)?/gi, "").trim();
 }
 
-function assertSubscriptionPrediction(value: any): value is SubscriptionPrediction {
+function normalizeSubscriptionCategory(category: unknown): SubscriptionCategory {
+  if (typeof category !== "string") return "Software";
+
+  if ((SUBSCRIPTION_CATEGORIES as readonly string[]).includes(category)) {
+    return category as SubscriptionCategory;
+  }
+
+  const legacyCategoryMap: Record<string, SubscriptionCategory> = {
+    Work: "Software",
+    Utilities: "Software",
+    Other: "Software",
+  };
+
+  return legacyCategoryMap[category] || "Software";
+}
+
+function assertSubscriptionPrediction(value: any): value is Omit<SubscriptionPrediction, "category"> & { category: unknown } {
   return (
     typeof value === "object" &&
     value !== null &&
@@ -51,8 +82,7 @@ function assertSubscriptionPrediction(value: any): value is SubscriptionPredicti
     typeof value.cost === "number" &&
     typeof value.currency === "string" &&
     typeof value.date === "string" &&
-    /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(value.date) &&
-    ["Entertainment", "Work", "Education", "Utilities", "Other"].includes(value.category)
+    /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(value.date)
   );
 }
 
@@ -87,7 +117,10 @@ export async function detectRecurringSubscriptionsFromText(rawText: string): Pro
     if (!assertSubscriptionPrediction(item)) {
       throw new Error(`LLM вернула объект неверного формата: ${JSON.stringify(item)}`);
     }
-    subscriptions.push(item);
+    subscriptions.push({
+      ...item,
+      category: normalizeSubscriptionCategory(item.category),
+    });
   }
 
   return subscriptions;

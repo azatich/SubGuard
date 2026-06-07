@@ -48,10 +48,11 @@ app.use('/api/settings', settingsRouter)
 app.use('/api/receipt', receiptRouter)
 app.use('/api/notification', notificationRouter)
 
-cron.schedule('* * * * *', () => {
-  NotificationController.processDailyReminders()
-})
-
+cron.schedule('0 9 * * *', () => {
+  NotificationController.processDailyReminders();
+}, {
+  timezone: "Asia/Aqtau"
+});
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
