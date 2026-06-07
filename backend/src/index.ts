@@ -11,7 +11,6 @@ import subscriptionRouter from './routes/subscription.js'
 import settingsRouter from './routes/settings.js';
 import receiptRouter from './routes/receipt.js';
 import notificationRouter from './routes/notification.js';
-import telegramRouter from './routes/telegram.js';
 import { NotificationController } from "./controllers/NotificationsController.js";
 
 dotenv.config();
@@ -48,7 +47,6 @@ app.use('/api/subscription', subscriptionRouter)
 app.use('/api/settings', settingsRouter)
 app.use('/api/receipt', receiptRouter)
 app.use('/api/notification', notificationRouter)
-app.use('/api/telegram', telegramRouter)
 
 cron.schedule('* * * * *', () => {
   NotificationController.processDailyReminders()

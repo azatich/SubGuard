@@ -1,9 +1,7 @@
 import { type Request, type Response } from "express";
 import { supabase } from "../index.js";
-import { isSameDay, subDays } from "date-fns";
 import type { AuthenticatedRequest } from "../middlewares/AuthMiddleware.js";
 import { sendMail } from "../services/email.service.js";
-import { sendTelegramMessage } from "../services/telegram.service.js";
 import { getReminderEmailHtml } from "../services/email-templates/reminder.js";
 
 export class NotificationController {
@@ -26,8 +24,7 @@ export class NotificationController {
           user_id,
           profiles:user_id (
             email,
-            reminder_days,
-            telegram_chat_id
+            reminder_days
           )
         `,
         )
@@ -118,19 +115,6 @@ export class NotificationController {
           }
           console.error(`Ошибка отправки письма для ${userEmail}:`, emailError);
           continue;
-        }
-
-        // 8. Отправляем Telegram сообщение (если chat_id установлен)
-        if (profile?.telegram_chat_id) {
-          try {
-            const telegramMessage = `🔔 <b>Напоминание</b>\n\n<b>${sub.name}</b>\n💰 ${sub.cost} ${sub.currency}\n⏰ Оплата через ${reminderDays} дн.\n📅 ${new Date(sub.next_payment_date).toLocaleDateString("ru-RU")}`;
-            await sendTelegramMessage({
-              chatId: profile.telegram_chat_id,
-              message: telegramMessage,
-            });
-          } catch (telegramError) {
-            console.error(`Ошибка отправки Telegram для ${profile.telegram_chat_id}:`, telegramError);
-          }
         }
 
         sentCount++;

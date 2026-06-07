@@ -9,7 +9,7 @@ export class SettingsController {
       if (!user) {
         return res.status(401).json({ message: "Unauthorized" });
       }
-      const { fullName, baseCurrency, reminderDays, telegramChatId } = req.body;
+      const { fullName, baseCurrency, reminderDays } = req.body;
       let avatarUrl: string | undefined = undefined;
 
       if (req.file) {
@@ -44,7 +44,6 @@ export class SettingsController {
       if (fullName) updateData.full_name = fullName;
       if (baseCurrency) updateData.base_currency = baseCurrency;
       if (reminderDays) updateData.reminder_days = reminderDays;
-      if (telegramChatId) updateData.telegram_chat_id = telegramChatId;
       if (avatarUrl) updateData.avatar_url = avatarUrl;
 
       if (Object.keys(updateData).length === 0) {
@@ -92,7 +91,6 @@ export class SettingsController {
         email: profile.email,
         updated_at: profile.updated_at,
         reminder_days: profile.reminder_days,
-        telegram_chat_id: profile.telegram_chat_id,
       });
     } catch (error) {
       console.error("Settings Get Error:", error);
