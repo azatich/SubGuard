@@ -159,14 +159,6 @@ export default function SubGuardHomePage() {
           <GoogleAuthButton />
         </div>
 
-        {/* ───────────────────────────────────────────────────────────
-            FLOATING CARDS — absolute on ALL breakpoints.
-            Mobile: small (w-36~44), peeking from edges.
-            Tablet: medium (w-52~60), partially visible.
-            Desktop: full size (w-72~96), fully visible.
-        ─────────────────────────────────────────────────────────── */}
-
-        {/* Card 1 — Monthly Spend | left-center | SHARP */}
         <div className="
           absolute z-20 pointer-events-none
           w-40 sm:w-60 md:w-72 lg:w-80 xl:w-96
