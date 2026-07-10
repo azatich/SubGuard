@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useSignup } from "../model/use-signup";
 import { useSignupWithGoogle } from "../model/use-signup-google";
+import { GoogleAuthButton } from "@/app/GoogleAuthButton";
 
 const signupSchema = z.object({
   full_name: z.string().min(3, "Имя должно содержать минимум 3 символа"),
@@ -45,20 +46,7 @@ export const SignupForm = () => {
       </div>
 
       <div className="grid gap-4">
-        <Button
-          type="button"
-          onClick={() => signupWithGoogle()}
-          disabled={isGooglePending}
-          variant="outline"
-          className="h-12 bg-transparent border-neutral-800 text-white hover:bg-neutral-900 hover:text-white rounded-full disabled:opacity-50"
-        >
-          {isGooglePending ? (
-            <span className="mr-2 text-lg animate-pulse">...</span>
-          ) : (
-            <span className="mr-2 text-lg">G</span>
-          )}
-          Google
-        </Button>
+        <GoogleAuthButton text='Зарегистрироваться через' />
       </div>
 
       <div className="relative flex items-center">

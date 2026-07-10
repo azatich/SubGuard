@@ -203,7 +203,7 @@ export const SubscriptionsTable = () => {
 
   return (
     <div className="w-full">
-      <div className="flex flex-col gap-6 my-6">
+      <div className="flex flex-col gap-6 mb-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Все подписки</h1>

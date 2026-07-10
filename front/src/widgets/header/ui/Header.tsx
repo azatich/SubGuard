@@ -15,6 +15,7 @@ import { useNotifications } from "@/features/notifications";
 const NAV_LINKS = [
   { name: "Дэшборд", href: "/dashboard" },
   { name: "Подписки", href: "/subscriptions" },
+  { name: "Анализ выписки", href: "/statement-analysis" },
   { name: "Календарь", href: "/calendar" },
 ];
 

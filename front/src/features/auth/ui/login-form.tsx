@@ -11,6 +11,7 @@ import z from "zod";
 import { useLogin } from "../model/use-login";
 import { useSignupWithGoogle } from "../model/use-signup-google";
 import { translateAuthError } from "@/shared/lib/error-mapper";
+import { GoogleAuthButton } from "@/app/GoogleAuthButton";
 
 const loginSchema = z.object({
   email: z.string().email("Введите корректный email адрес"),
@@ -29,7 +30,8 @@ export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const { mutate: login, isPending, error, isError } = useLogin();
-  const { mutate: loginWithGoogle, isPending: isGooglePending } = useSignupWithGoogle();
+  const { mutate: loginWithGoogle, isPending: isGooglePending } =
+    useSignupWithGoogle();
 
   const onSubmit = (data: Inputs) => {
     login(data);
@@ -45,20 +47,7 @@ export const LoginForm = () => {
       </div>
 
       <div className="grid gap-4">
-        <Button
-          type="button"
-          onClick={() => loginWithGoogle()}
-          disabled={isGooglePending}
-          variant="outline"
-          className="h-12 bg-transparent border-neutral-800 text-white hover:bg-neutral-900 hover:text-white rounded-full disabled:opacity-50"
-        >
-          {isGooglePending ? (
-            <span className="mr-2 text-lg animate-pulse">...</span>
-          ) : (
-            <span className="mr-2 text-lg">G</span>
-          )}
-          Google
-        </Button>
+        <GoogleAuthButton text='Войти через' />
       </div>
 
       <div className="relative flex items-center">
