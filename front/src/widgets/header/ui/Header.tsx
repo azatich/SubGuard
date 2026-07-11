@@ -151,37 +151,40 @@ export function Header() {
             <Link
               href="/settings"
               title="Профиль"
-              className="flex items-center gap-3 group hover:opacity-80 transition-opacity"
+              aria-label="Открыть профиль"
+              className="group flex items-center gap-2 rounded-full p-1 pr-2 transition-colors hover:bg-zinc-900 sm:pr-3"
             >
-              <span className="hidden sm:block text-sm font-medium text-zinc-200 group-hover:text-white transition-colors">
-                {user?.full_name ?? "Пользователь"}
-              </span>
-              <div className="relative w-10 h-10 rounded-full overflow-hidden border border-zinc-700 bg-zinc-800 flex items-center justify-center shadow-lg group-hover:border-[#2cfc73] transition-colors">
+              <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-zinc-700 bg-zinc-800 group-hover:border-green-500">
                 {user?.avatar_url ? (
                   <Image
                     src={user.avatar_url}
-                    alt="Avatar"
+                    alt=""
                     fill
                     className="object-cover"
-                    sizes="40px"
+                    sizes="36px"
                     priority
                   />
                 ) : (
-                  <User className="w-5 h-5 text-zinc-500" />
+                  <User className="h-4 w-4 text-zinc-400" />
                 )}
-              </div>
+              </span>
+              <span className="hidden max-w-36 truncate text-sm font-medium text-zinc-200 group-hover:text-white sm:block">
+                {user?.full_name ?? "Пользователь"}
+              </span>
             </Link>
           )}
 
           {/* Выход */}
           <button
-            aria-label="Выйти"
+            type="button"
+            aria-label="Выйти из аккаунта"
             title="Выйти"
-            className="bg-red-500 p-2 rounded-lg flex justify-center items-center hover:bg-red-900 transition-colors duration-200 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg border border-zinc-800 px-3 py-2 text-sm text-zinc-300 transition-colors hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-400 disabled:cursor-not-allowed disabled:opacity-50"
             disabled={isLogoutPending}
             onClick={() => logout()}
           >
-            <LogOut className="w-5 h-5" />
+            <LogOut className="h-4 w-4" />
+            <span className="hidden sm:inline">Выйти</span>
           </button>
         </div>
       </div>
