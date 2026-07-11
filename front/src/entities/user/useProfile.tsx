@@ -12,11 +12,17 @@ interface UserProfileResponse {
 }
 
 
-export const useProfile = () => {
+interface UseProfileOptions {
+  redirectOnUnauthorized?: boolean;
+}
+
+export const useProfile = ({ redirectOnUnauthorized = true }: UseProfileOptions = {}) => {
   return useQuery<UserProfileResponse>({
     queryKey: ['profile'],
     queryFn: async () => {
-      const res = await api.get('/settings/profile');
+      const res = await api.get('/settings/profile', {
+        skipAuthRedirect: !redirectOnUnauthorized,
+      });
       return res.data;
     },
     staleTime: 1000 * 60 * 5, 

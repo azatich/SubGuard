@@ -1,6 +1,6 @@
 import React from "react";
 import { ShieldCheck } from "lucide-react";
-import Link from "next/link";
+import { LandingHeader } from "@/widgets/landing-header/LandingHeader";
 import { GoogleAuthButton } from "./GoogleAuthButton";
 
 /* ─── Card Components ─────────────────────────────────────────────── */
@@ -94,24 +94,7 @@ export default function SubGuardHomePage() {
     <div className="min-h-screen bg-[#09090b] text-zinc-100 font-sans flex flex-col overflow-hidden">
 
       {/* ── HEADER ── */}
-      <header className="fixed top-0 left-0 w-full bg-[#09090b]/90 backdrop-blur-md border-b border-zinc-800 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-green-500/10 rounded-lg">
-              <ShieldCheck className="text-green-500 w-5 h-5 sm:w-6 sm:h-6 stroke-[3]" />
-            </div>
-            <span className="text-lg sm:text-2xl font-bold tracking-tight text-white">SubGuard</span>
-          </div>
-          <div className="flex items-center gap-3 sm:gap-6">
-            <Link href="/login" className="text-xs sm:text-sm font-medium text-zinc-500 hover:text-zinc-100 transition-colors">
-              Войти
-            </Link>
-            <Link href="/signup" className="text-xs sm:text-sm font-medium text-black bg-green-500 rounded-lg px-3 py-1.5 sm:px-5 sm:py-2 hover:bg-green-600 transition-all whitespace-nowrap">
-              Зарегистрироваться
-            </Link>
-          </div>
-        </div>
-      </header>
+      <LandingHeader />
 
       {/* ── MAIN STAGE ── */}
       <main className="relative flex-1 flex items-center justify-center min-h-screen">
