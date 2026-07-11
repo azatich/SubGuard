@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_URL || "https://subguard.onrender.com/api"}/:path*`, 
+        destination: `${process.env.NEXT_PUBLIC_API_URL || "https://subguard-api.duckdns.org/api"}/:path*`, 
       },
     ];
   },
